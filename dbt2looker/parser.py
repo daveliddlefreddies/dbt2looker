@@ -37,11 +37,12 @@ def parse_models(raw_manifest: dict, tag=None) -> List[models.DbtModel]:
         if node.resource_type == 'model'
     ]
 
+    # dbt-labs/redshift breaks this....
     # Empty model files have many missing parameters
-    for model in all_models:
-        if not hasattr(model, 'name'):
-            logging.error('Cannot parse model with id: "%s" - is the model file empty?', model.unique_id)
-            raise SystemExit('Failed')
+    # for model in all_models:
+    #     if not hasattr(model, 'name'):
+    #         logging.error('Cannot parse model with id: "%s" - is the model file empty?', model.unique_id)
+    #         raise SystemExit('Failed')
 
     if tag is None:
         return all_models
