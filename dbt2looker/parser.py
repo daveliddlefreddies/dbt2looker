@@ -37,7 +37,7 @@ def parse_models(raw_manifest: dict, tag=None) -> List[models.DbtModel]:
         if node.resource_type == 'model'
     ]
 
-    # dbt-labs/redshift breaks this....
+    # DL: dbt-labs/redshift breaks this....
     # Empty model files have many missing parameters
     # for model in all_models:
     #     if not hasattr(model, 'name'):
