@@ -148,6 +148,8 @@ class DbtNode(BaseModel):
 
 class Dbt2LookerExploreJoin(BaseModel):
     join: str
+    # DL: add from tag - we may want to join the same table multiple times
+    from_view: Optional[str] = "TODO: MISSING PLEASE ADD!"
     type: Optional[LookerJoinType] = LookerJoinType.left_outer
     relationship: Optional[LookerJoinRelationship] = LookerJoinRelationship.many_to_one
     sql_on: str

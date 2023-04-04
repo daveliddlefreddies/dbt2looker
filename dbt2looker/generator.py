@@ -343,6 +343,8 @@ def lookml_model_from_dbt_model(model: models.DbtModel, connection_name: str):
             'joins': [
                 {
                     'name': join.join,
+                    # DL: add from tag - we may want to join the same table multiple times
+                    'from': join.from_view,
                     'type': join.type.value,
                     'relationship': join.relationship.value,
                     'sql_on': join.sql_on,
