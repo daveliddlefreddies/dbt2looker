@@ -242,10 +242,13 @@ def lookml_dimension_groups_from_model(model: models.DbtModel, adapter_type: mod
     return date_times + dates
 
 
+# DL: changes here to handle dim_date joins
 def lookml_dimensions_from_model(model: models.DbtModel, adapter_type: models.SupportedDbtAdapters):
     return [
         {
-            'name': column.meta.dimension.name or column.name,
+            'name': column.meta.dimension.name or column.name
+                if not column.name.endswith('_date_key')
+                else f"{column.name}__dim_date",
             'type': map_adapter_type_to_looker(adapter_type, column.data_type),
             'sql': column.meta.dimension.sql or f'${{TABLE}}.{column.name}',
             'description': column.meta.dimension.description or column.description,
@@ -258,7 +261,7 @@ def lookml_dimensions_from_model(model: models.DbtModel, adapter_type: models.Su
         }
         for column in model.columns.values()
         if column.meta.dimension.enabled
-        and map_adapter_type_to_looker(adapter_type, column.data_type) in looker_scalar_types
+        and (map_adapter_type_to_looker(adapter_type, column.data_type) in looker_scalar_types or column.name.endswith('_date_key'))
     ]
 
 
