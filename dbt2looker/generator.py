@@ -274,11 +274,11 @@ def lookml_dimensions_from_model(model: models.DbtModel, adapter_type: models.Su
         and (map_adapter_type_to_looker(adapter_type, column.data_type) in looker_scalar_types or column.name.endswith('date_key'))
     ]
 
-
+# DL: fix to allow joins to other tables - remove model checks
 def lookml_measure_filters(measure: models.Dbt2LookerMeasure, model: models.DbtModel):
     try:
         columns = {
-            column_name: model.columns[column_name]
+            column_name: column_name # model.columns[column_name]
             for f in measure.filters
             for column_name in f
         }
@@ -288,7 +288,8 @@ def lookml_measure_filters(measure: models.Dbt2LookerMeasure, model: models.DbtM
             f'Ensure that dbt model {model.unique_id} contains a column: {e}'
         ) from e
     return [{
-        (columns[column_name].meta.dimension.name or column_name): fexpr
+        # (columns[column_name].meta.dimension.name or column_name): fexpr
+        (column_name): fexpr
         for column_name, fexpr in f.items()
     } for f in measure.filters]
 
