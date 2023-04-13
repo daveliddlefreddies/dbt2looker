@@ -249,7 +249,7 @@ def lookml_dimension_groups_from_model(model: models.DbtModel, adapter_type: mod
     return date_times + dates
 
 
-# DL: changes here to handle dim_date joins
+# DL: changes here to handle dim_date joins and PII data
 def lookml_dimensions_from_model(model: models.DbtModel, adapter_type: models.SupportedDbtAdapters):
     return [
         {
@@ -260,7 +260,21 @@ def lookml_dimensions_from_model(model: models.DbtModel, adapter_type: models.Su
                     ( model.name == 'dim_date' and (not column.name.endswith('date_key') or column.name == 'date_key' ))
                 else f"{column.name}__dim_date",
             'type': map_adapter_type_to_looker(adapter_type, column.data_type),
-            'sql': column.meta.dimension.sql or f'${{TABLE}}.{column.name}',
+            'sql': f"""{{% if _user_attributes['can_see_customer_addresses']  == 'Yes' %}}
+                ${{TABLE}}.{column.name}
+                {{% else %}}
+                'sorry, no permissions- speak to commercial if you need access'
+                {{% endif %}}"""
+                if column.meta.dimension.customer_address_field
+                else 
+                    f"""{{% if _user_attributes['can_see_customer_name_and_email']  == 'Yes' %}}
+                    ${{TABLE}}.{column.name}
+                    {{% else %}}
+                    'sorry, no permissions- speak to commercial if you need access'
+                    {{% endif %}}"""
+                    if column.meta.dimension.customer_name_and_email
+                    else
+                    column.meta.dimension.sql or f'${{TABLE}}.{column.name}',
             'description': column.meta.dimension.description or column.description,
             **(
                 {'value_format_name': column.meta.dimension.value_format_name.value}

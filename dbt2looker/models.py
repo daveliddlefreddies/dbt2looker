@@ -97,9 +97,11 @@ class Dbt2LookerMeasure(BaseModel):
                     raise ValueError('Multiple filter names provided for a single filter in measure block')
         return v
 
-
+# DL: added customer_address_field and customer_name_and_email
 class Dbt2LookerDimension(BaseModel):
     enabled: Optional[bool] = True
+    customer_address_field: Optional[bool] = False
+    customer_name_and_email: Optional[bool] = False
     name: Optional[str]
     sql: Optional[str]
     description: Optional[str]
