@@ -84,6 +84,7 @@ class Dbt2LookerMeasure(BaseModel):
     filters: Optional[List[Dict[str, str]]] = []
     description: Optional[str]
     sql: Optional[str]
+    primary_key: Optional[str]
     value_format_name: Optional[LookerValueFormatName]
     group_label: Optional[str]
     label: Optional[str]
@@ -102,6 +103,7 @@ class Dbt2LookerDimension(BaseModel):
     enabled: Optional[bool] = True
     customer_address_field: Optional[bool] = False
     customer_name_and_email: Optional[bool] = False
+    primary_key: Optional[bool] = False
     name: Optional[str]
     sql: Optional[str]
     description: Optional[str]

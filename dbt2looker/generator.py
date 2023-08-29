@@ -192,12 +192,16 @@ looker_timeframes = [
 
 
 def normalise_spark_types(column_type: str) -> str:
+    # TODO: TESTING
+    # print (column_type)
     return re.match(r'^[^\(]*', column_type).group(0)
 
 
 def map_adapter_type_to_looker(adapter_type: models.SupportedDbtAdapters, column_type: str):
     # normalised_column_type = (normalise_spark_types(column_type) if adapter_type == models.SupportedDbtAdapters.spark.value else column_type).upper()
     # DL: this also needs to be done for redshift e.g. want: 'CHARACTER VARYING(20)' updated to: 'CHARACTER VARYING'
+    # TODO: TESTING
+    # print (column_type)
     normalised_column_type = (normalise_spark_types(column_type) if adapter_type == models.SupportedDbtAdapters.redshift.value else column_type).upper()
     looker_type = LOOKER_DTYPE_MAP[adapter_type].get(normalised_column_type)
     if (column_type is not None) and (looker_type is None):
@@ -206,6 +210,9 @@ def map_adapter_type_to_looker(adapter_type: models.SupportedDbtAdapters, column
 
 
 def lookml_date_time_dimension_group(column: models.DbtModelColumn, adapter_type: models.SupportedDbtAdapters):
+    # TODO: TESTING
+    # print (column.name)
+    
     return {
         'name': column.meta.dimension.name or column.name,
         'type': 'time',
@@ -277,6 +284,11 @@ def lookml_dimensions_from_model(model: models.DbtModel, adapter_type: models.Su
                     column.meta.dimension.sql or f'${{TABLE}}.{column.name}',
             'description': column.meta.dimension.description or column.description,
             **(
+                {'primary_key': "yes"}
+                if (column.meta.dimension.primary_key)
+                else {}
+            ),
+            **(
                 {'value_format_name': column.meta.dimension.value_format_name.value}
                 if (column.meta.dimension.value_format_name
                     and map_adapter_type_to_looker(adapter_type, column.data_type) == 'number')
@@ -339,6 +351,9 @@ def lookml_measure(measure_name: str, column: models.DbtModelColumn, measure: mo
 
 
 def lookml_view_from_dbt_model(model: models.DbtModel, adapter_type: models.SupportedDbtAdapters):
+    logging.debug(
+        f"Model name: {model.name}"
+    )
     lookml = {
         'view': {
             'name': model.name,
