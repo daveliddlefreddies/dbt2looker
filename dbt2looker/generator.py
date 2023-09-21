@@ -87,6 +87,8 @@ LOOKER_DTYPE_MAP = {
         'TIMESTAMP': 'timestamp',
         'TIMESTAMP WITHOUT TIME ZONE': 'timestamp',
         # TIMESTAMPTZ not supported
+        # DL: testing....
+        'TIMESTAMP WITH TIME ZONE': 'timestamp',
         # TIMESTAMP WITH TIME ZONE not supported
         'GEOMETRY': 'string',
         # HLLSKETCH not supported
@@ -224,6 +226,9 @@ def lookml_date_time_dimension_group(column: models.DbtModelColumn, adapter_type
 
 
 def lookml_date_dimension_group(column: models.DbtModelColumn, adapter_type: models.SupportedDbtAdapters):
+    # TODO: TESTING
+    # print (column.name)
+    
     return {
         'name': column.meta.dimension.name or column.name,
         'type': 'time',
@@ -236,6 +241,11 @@ def lookml_date_dimension_group(column: models.DbtModelColumn, adapter_type: mod
 
 # DL: changes here to handle dim_date joins
 def lookml_dimension_groups_from_model(model: models.DbtModel, adapter_type: models.SupportedDbtAdapters):
+    # TODO: TESTING
+    # for column in model.columns.values():
+    #     print (column)
+    #     print (column.data_type)
+    
     date_times = [
         lookml_date_time_dimension_group(column, adapter_type)
         for column in model.columns.values()
